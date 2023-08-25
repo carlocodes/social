@@ -10,7 +10,6 @@ import java.util.Random;
 
 @Service
 public class OtpService {
-
     public Otp generateOtp() throws SocialException {
         try {
             Random random = new Random();

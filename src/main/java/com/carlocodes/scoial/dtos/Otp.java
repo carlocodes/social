@@ -3,8 +3,8 @@ package com.carlocodes.scoial.dtos;
 import java.time.LocalDateTime;
 
 public class Otp {
-    private String value;
-    private LocalDateTime expiration;
+    private final String value;
+    private final LocalDateTime expiration;
 
     public Otp(String value, LocalDateTime expiration) {
         this.value = value;

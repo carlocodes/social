@@ -25,4 +25,10 @@ public class UserController {
         userService.register(userDto);
         return ResponseEntity.ok("Registered!");
     }
+
+    @PostMapping("/verify")
+    public ResponseEntity<String> verify(@RequestBody UserDto userDto) throws SocialException {
+        userService.verify(userDto);
+        return ResponseEntity.ok("Verified!");
+    }
 }

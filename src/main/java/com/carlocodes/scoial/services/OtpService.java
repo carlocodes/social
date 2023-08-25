@@ -9,8 +9,10 @@ import java.util.Random;
 
 @Service
 public class OtpService {
+    // TODO: Maybe move these values into an enum
+    // So we can use in other classes
     private static final int OTP_LENGTH = 6;
-    private static final int OTP_EXPIRATION_MINUTES = 10;
+    private static final long OTP_EXPIRATION_MINUTES = 10;
 
     public Otp generateOtp() throws SocialException {
         try {

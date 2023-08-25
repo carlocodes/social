@@ -11,7 +11,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
-    private Boolean verified;
+    private boolean verified;
 
     public Long getId() {
         return id;

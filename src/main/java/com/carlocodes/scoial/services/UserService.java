@@ -3,6 +3,7 @@ package com.carlocodes.scoial.services;
 import com.carlocodes.scoial.dtos.Otp;
 import com.carlocodes.scoial.dtos.UserDto;
 import com.carlocodes.scoial.entities.User;
+import com.carlocodes.scoial.enums.OtpEnum;
 import com.carlocodes.scoial.exceptions.SocialException;
 import com.carlocodes.scoial.repositories.UserRepository;
 import com.carlocodes.scoial.utilities.InMemoryOtpCache;
@@ -82,8 +83,7 @@ public class UserService {
 
                 if (!otp.equals(storedOtpValue))
                     throw new SocialException("OTP does not match!");
-                // TODO: Use constant value for minutes
-                if (now.minusMinutes(10).isAfter(storedOtpExpiration))
+                if (now.minusMinutes(OtpEnum.OTP_EXPIRATION_MINUTES.getValue()).isAfter(storedOtpExpiration))
                     throw new SocialException("OTP expired!");
 
                 User user = optionalUser.get();

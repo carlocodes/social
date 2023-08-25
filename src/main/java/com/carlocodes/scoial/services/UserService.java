@@ -33,32 +33,19 @@ public class UserService {
         try {
             String email = userDto.getEmail();
 
-            Optional<User> optionalUser = userRepository.findByEmail(email);
-
-            if (optionalUser.isEmpty()) {
+            if (!userRepository.existsByEmail(email)) {
                 User user = new User();
-
                 user.setEmail(email);
-                user.setVerified(false);
-
                 userRepository.save(user);
-
-                if (doesEmailHaveAnExistingOtp(email)) {
-                    InMemoryOtpCache.remove(email);
-                }
-
-                Otp otp = otpService.generateOtp();
-                InMemoryOtpCache.put(email, otp);
-                emailService.sendOtp(email, otp);
-            } else {
-                if (doesEmailHaveAnExistingOtp(email)) {
-                    InMemoryOtpCache.remove(email);
-                }
-
-                Otp otp = otpService.generateOtp();
-                InMemoryOtpCache.put(email, otp);
-                emailService.sendOtp(email, otp);
             }
+
+            if (doesEmailHaveAnExistingOtp(email)) {
+                InMemoryOtpCache.remove(email);
+            }
+
+            Otp otp = otpService.generateOtp();
+            InMemoryOtpCache.put(email, otp);
+            emailService.sendOtp(email, otp);
         } catch (SocialException e) {
             throw new SocialException(String.format("Register failed for email: %s due to %s", userDto.getEmail(), e.getMessage()), e);
         }
@@ -71,35 +58,33 @@ public class UserService {
 
             Optional<User> optionalUser = userRepository.findByEmail(email);
 
-            if (optionalUser.isPresent()) {
-                Otp storedOtp = InMemoryOtpCache.get(email);
-
-                if (Objects.isNull(storedOtp))
-                    throw new SocialException("OTP does not exist!");
-
-                LocalDateTime now = LocalDateTime.now();
-                String storedOtpValue = storedOtp.getValue();
-                LocalDateTime storedOtpExpiration = storedOtp.getExpiration();
-
-                if (!otp.equals(storedOtpValue))
-                    throw new SocialException("OTP does not match!");
-                if (now.minusMinutes(OtpEnum.OTP_EXPIRATION_MINUTES.getValue()).isAfter(storedOtpExpiration))
-                    throw new SocialException("OTP expired!");
-
-                User user = optionalUser.get();
-
-                if (!user.getVerified()) {
-                    user.setVerified(true);
-                    userRepository.save(user);
-                }
-
-                // TODO: Authenticate and authorize
-                // Return jwt
-
-                InMemoryOtpCache.remove(email);
-            } else {
+            if (optionalUser.isEmpty()) {
                 throw new SocialException(String.format("User not found for email: %s", email));
             }
+
+            User user = optionalUser.get();
+            Otp storedOtp = InMemoryOtpCache.get(email);
+
+            if (Objects.isNull(storedOtp) || !otp.equals(storedOtp.getValue())) {
+                throw new SocialException("OTP does not match or does not exist!");
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime storedOtpExpiration = storedOtp.getExpiration();
+
+            if (now.isAfter(storedOtpExpiration)) {
+                throw new SocialException("OTP expired!");
+            }
+
+            if (!user.getVerified()) {
+                user.setVerified(true);
+                userRepository.save(user);
+            }
+
+            // TODO: Authenticate and Authorize
+            // Return JWT
+
+            InMemoryOtpCache.remove(email);
         } catch (SocialException e) {
             throw new SocialException(String.format("Verify failed for email: %s due to %s", userDto.getEmail(), e.getMessage()), e);
         }

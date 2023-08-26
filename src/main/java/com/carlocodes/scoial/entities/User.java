@@ -29,11 +29,11 @@ public class User {
         this.email = email;
     }
 
-    public Boolean getVerified() {
+    public boolean isVerified() {
         return verified;
     }
 
-    public void setVerified(Boolean verified) {
+    public void setVerified(boolean verified) {
         this.verified = verified;
     }
 

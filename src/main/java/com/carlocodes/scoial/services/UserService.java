@@ -3,7 +3,6 @@ package com.carlocodes.scoial.services;
 import com.carlocodes.scoial.dtos.Otp;
 import com.carlocodes.scoial.dtos.UserDto;
 import com.carlocodes.scoial.entities.User;
-import com.carlocodes.scoial.enums.OtpEnum;
 import com.carlocodes.scoial.exceptions.SocialException;
 import com.carlocodes.scoial.repositories.UserRepository;
 import com.carlocodes.scoial.utilities.InMemoryOtpCache;
@@ -47,7 +46,7 @@ public class UserService {
             InMemoryOtpCache.put(email, otp);
             emailService.sendOtp(email, otp);
         } catch (SocialException e) {
-            throw new SocialException(String.format("Register failed for email: %s due to %s", userDto.getEmail(), e.getMessage()), e);
+            throw new SocialException(String.format("Register user with email: %s failed due to %s", userDto.getEmail(), e.getMessage()), e);
         }
     }
 
@@ -59,7 +58,7 @@ public class UserService {
             Optional<User> optionalUser = userRepository.findByEmail(email);
 
             if (optionalUser.isEmpty()) {
-                throw new SocialException(String.format("User not found for email: %s", email));
+                throw new SocialException(String.format("User with email: %s does not exist!", email));
             }
 
             User user = optionalUser.get();
@@ -76,7 +75,7 @@ public class UserService {
                 throw new SocialException("OTP expired!");
             }
 
-            if (!user.getVerified()) {
+            if (!user.isVerified()) {
                 user.setVerified(true);
                 userRepository.save(user);
             }
@@ -86,11 +85,15 @@ public class UserService {
 
             InMemoryOtpCache.remove(email);
         } catch (SocialException e) {
-            throw new SocialException(String.format("Verify failed for email: %s due to %s", userDto.getEmail(), e.getMessage()), e);
+            throw new SocialException(String.format("Verify user with email: %s failed due to %s", userDto.getEmail(), e.getMessage()), e);
         }
     }
 
     private boolean doesEmailHaveAnExistingOtp(String email) {
         return Objects.nonNull(InMemoryOtpCache.get(email));
+    }
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 }

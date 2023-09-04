@@ -1,14 +1,12 @@
 package com.carlocodes.scoial.services;
 
 import com.carlocodes.scoial.dtos.AuthDto;
-import com.carlocodes.scoial.dtos.Otp;
 import com.carlocodes.scoial.entities.User;
+import com.carlocodes.scoial.enums.OtpEnum;
 import com.carlocodes.scoial.exceptions.SocialException;
-import com.carlocodes.scoial.utilities.InMemoryOtpCache;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -28,20 +26,20 @@ public class AuthService {
     public void register(AuthDto authDto) throws SocialException {
         try {
             String email = authDto.getEmail();
+            String password = otpService.generateOtp();
+            LocalDateTime now = LocalDateTime.now();
 
-            if (!userService.existsByEmail(email)) {
-                User user = new User();
-                user.setEmail(email);
-                userService.save(user);
-            }
+            Optional<User> optionalUser = userService.findByEmail(email);
 
-            if (doesEmailHaveAnExistingOtp(email)) {
-                InMemoryOtpCache.remove(email);
-            }
+            User user = optionalUser.orElse(new User());
 
-            Otp otp = otpService.generateOtp();
-            InMemoryOtpCache.put(email, otp);
-            emailService.sendOtp(email, otp);
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setDateTime(now);
+
+            userService.save(user);
+
+            emailService.sendOtp(email, password);
         } catch (SocialException e) {
             throw new SocialException(String.format("Register user with email: %s failed due to %s", authDto.getEmail(), e.getMessage()), e);
         }
@@ -53,22 +51,17 @@ public class AuthService {
             String password = authDto.getPassword();
 
             Optional<User> optionalUser = userService.findByEmail(email);
+            User user = optionalUser.orElseThrow(() -> new SocialException(String.format("User with email: %s does not exist!", email)));
+            String storedPassword = user.getPassword();
 
-            if (optionalUser.isEmpty()) {
-                throw new SocialException(String.format("User with email: %s does not exist!", email));
-            }
-
-            User user = optionalUser.get();
-            Otp storedOtp = InMemoryOtpCache.get(email);
-
-            if (Objects.isNull(storedOtp) || !password.equals(storedOtp.getValue())) {
-                throw new SocialException("OTP does not match or does not exist!");
+            if (!password.equals(storedPassword)) {
+                throw new SocialException("OTP does not match!!");
             }
 
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime storedOtpExpiration = storedOtp.getExpiration();
+            LocalDateTime expirationTime = user.getDateTime().plusMinutes(OtpEnum.OTP_EXPIRATION_MINUTES.getValue());
 
-            if (now.isAfter(storedOtpExpiration)) {
+            if (now.isAfter(expirationTime)) {
                 throw new SocialException("OTP expired!");
             }
 
@@ -79,14 +72,8 @@ public class AuthService {
 
             // TODO: Authenticate and Authorize
             // Return JWT
-
-            InMemoryOtpCache.remove(email);
         } catch (SocialException e) {
             throw new SocialException(String.format("Verify user with email: %s failed due to %s", authDto.getEmail(), e.getMessage()), e);
         }
-    }
-
-    private boolean doesEmailHaveAnExistingOtp(String email) {
-        return Objects.nonNull(InMemoryOtpCache.get(email));
     }
 }

@@ -1,8 +1,8 @@
 package com.carlocodes.scoial.dtos;
 
-public class UserDto {
+public class AuthDto {
     private String email;
-    private String otp;
+    private String password;
 
     public String getEmail() {
         return email;
@@ -12,19 +12,18 @@ public class UserDto {
         this.email = email;
     }
 
-    public String getOtp() {
-        return otp;
+    public String getPassword() {
+        return password;
     }
 
-    public void setOtp(String otp) {
-        this.otp = otp;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
     public String toString() {
-        return "UserDto{" +
+        return "AuthDto{" +
                 "email='" + email + '\'' +
-                ", otp='" + otp + '\'' +
                 '}';
     }
 }

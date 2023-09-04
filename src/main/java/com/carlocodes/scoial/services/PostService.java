@@ -5,7 +5,6 @@ import com.carlocodes.scoial.entities.Post;
 import com.carlocodes.scoial.entities.User;
 import com.carlocodes.scoial.exceptions.SocialException;
 import com.carlocodes.scoial.repositories.PostRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +12,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
 
-    @Autowired
     public PostService(PostRepository postRepository,
                        UserService userService) {
         this.postRepository = postRepository;

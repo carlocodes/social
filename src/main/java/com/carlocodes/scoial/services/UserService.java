@@ -6,7 +6,6 @@ import com.carlocodes.scoial.entities.User;
 import com.carlocodes.scoial.exceptions.SocialException;
 import com.carlocodes.scoial.repositories.UserRepository;
 import com.carlocodes.scoial.utilities.InMemoryOtpCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,6 @@ public class UserService {
     private final OtpService otpService;
     private final EmailService emailService;
 
-    @Autowired
     public UserService(UserRepository userRepository,
                        OtpService otpService,
                        EmailService emailService) {

@@ -4,6 +4,9 @@ import com.carlocodes.scoial.dtos.AuthDto;
 import com.carlocodes.scoial.entities.User;
 import com.carlocodes.scoial.enums.OtpEnum;
 import com.carlocodes.scoial.exceptions.SocialException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,13 +17,22 @@ public class AuthService {
     private final UserService userService;
     private final OtpService otpService;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
     public AuthService(UserService userService,
                        OtpService otpService,
-                       EmailService emailService) {
+                       EmailService emailService,
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager,
+                       TokenService tokenService) {
         this.userService = userService;
         this.otpService = otpService;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
     }
 
     public void register(AuthDto authDto) throws SocialException {
@@ -34,7 +46,7 @@ public class AuthService {
             User user = optionalUser.orElse(new User());
 
             user.setEmail(email);
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
             user.setDateTime(now);
 
             userService.save(user);
@@ -45,18 +57,13 @@ public class AuthService {
         }
     }
 
-    public void verify(AuthDto authDto) throws SocialException {
+    public String verify(AuthDto authDto) throws SocialException {
         try {
             String email = authDto.getEmail();
             String password = authDto.getPassword();
 
             Optional<User> optionalUser = userService.findByEmail(email);
             User user = optionalUser.orElseThrow(() -> new SocialException(String.format("User with email: %s does not exist!", email)));
-            String storedPassword = user.getPassword();
-
-            if (!password.equals(storedPassword)) {
-                throw new SocialException("OTP does not match!!");
-            }
 
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime expirationTime = user.getDateTime().plusMinutes(OtpEnum.OTP_EXPIRATION_MINUTES.getValue());
@@ -70,8 +77,9 @@ public class AuthService {
                 userService.save(user);
             }
 
-            // TODO: Authenticate and Authorize
-            // Return JWT
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+
+            return tokenService.generateToken(user);
         } catch (SocialException e) {
             throw new SocialException(String.format("Verify user with email: %s failed due to %s", authDto.getEmail(), e.getMessage()), e);
         }

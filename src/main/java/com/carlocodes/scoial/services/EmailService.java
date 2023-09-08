@@ -1,6 +1,5 @@
 package com.carlocodes.scoial.services;
 
-import com.carlocodes.scoial.dtos.Otp;
 import com.carlocodes.scoial.exceptions.SocialException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,14 +17,14 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String from;
 
-    public void sendOtp(String email, Otp otp) throws SocialException {
+    public void sendOtp(String email, String password) throws SocialException {
         try {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
             simpleMailMessage.setFrom(from);
             simpleMailMessage.setTo(email);
             simpleMailMessage.setSubject("OTP");
-            simpleMailMessage.setText("OTP Code: " + otp.getValue());
+            simpleMailMessage.setText("OTP Code: " + password);
 
             javaMailSender.send(simpleMailMessage);
         } catch (Exception e) {

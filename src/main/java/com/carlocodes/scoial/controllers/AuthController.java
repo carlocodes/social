@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("verify")
     public ResponseEntity<String> verify(@RequestBody AuthDto authDto) throws SocialException {
-        authService.verify(authDto);
-        return ResponseEntity.ok("Verified!");
+        String token = authService.verify(authDto);
+        return ResponseEntity.ok(token);
     }
 }

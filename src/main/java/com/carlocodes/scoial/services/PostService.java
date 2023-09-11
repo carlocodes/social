@@ -7,6 +7,9 @@ import com.carlocodes.scoial.exceptions.SocialException;
 import com.carlocodes.scoial.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PostService {
     private final PostRepository postRepository;
@@ -23,11 +26,24 @@ public class PostService {
             Long userId = postDto.getUserId();
 
             User user = userService.findById(userId)
-                    .orElseThrow(() -> new SocialException(String.format("User with id: %s does not exist!", userId)));
+                    .orElseThrow(() -> new SocialException(String.format("User with id: %d does not exist!", userId)));
 
             return mapToDto(save(postDto, user));
         } catch (SocialException e) {
             throw new SocialException(String.format("Create post failed for user with id: %s due to %s", postDto.getUserId(), e.getMessage()), e);
+        }
+    }
+
+    public List<PostDto> getPosts(Long userId) throws SocialException {
+        try {
+            User user = userService.findById(userId)
+                    .orElseThrow(() -> new SocialException(String.format("User with id: %d does not exist!", userId)));
+
+            return postRepository.findByUser(user)
+                    .stream().map(this::mapToDto)
+                    .collect(Collectors.toList());
+        } catch (SocialException e) {
+            throw new SocialException(String.format("Get posts failed for user with id: %d due to %s", userId, e.getMessage()), e);
         }
     }
 

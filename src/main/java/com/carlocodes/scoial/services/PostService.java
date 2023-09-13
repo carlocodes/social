@@ -41,7 +41,7 @@ public class PostService {
 
             return mapToDto(post);
         } catch (SocialException e) {
-            throw new SocialException(String.format("Get post failed with id: %d due to %s", id, e.getMessage()), e);
+            throw new SocialException(String.format("Get post with id: %d failed due to %s", id, e.getMessage()), e);
         }
     }
 
@@ -76,7 +76,7 @@ public class PostService {
 
             return mapToDto(postRepository.save(post));
         } catch (SocialException e) {
-            throw new SocialException(String.format("Edit post failed with id: %d and user id: %d due to %s", postDto.getId(), postDto.getUserId(), e.getMessage()), e);
+            throw new SocialException(String.format("Edit post with id: %d failed for user with id: %d due to %s", postDto.getId(), postDto.getUserId(), e.getMessage()), e);
         }
     }
 

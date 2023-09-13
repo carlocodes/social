@@ -58,6 +58,28 @@ public class PostService {
         }
     }
 
+    public PostDto edit(PostDto postDto) throws SocialException {
+        try {
+            Long id = postDto.getId();
+            String message = postDto.getMessage();
+            String image = postDto.getImage();
+            Long userId = postDto.getUserId();
+
+            Post post = postRepository.findById(id)
+                    .orElseThrow(() -> new SocialException(String.format("Post with id: %d does not exist!", id)));
+
+            if (!post.getId().equals(userId))
+                throw new SocialException("You do not have permission to edit this post!");
+
+            post.setMessage(message != null ? message : post.getMessage());
+            post.setImage(image != null ? image : post.getImage());
+
+            return mapToDto(postRepository.save(post));
+        } catch (SocialException e) {
+            throw new SocialException(String.format("Edit post failed with id: %d and user id: %d due to %s", postDto.getId(), postDto.getUserId(), e.getMessage()), e);
+        }
+    }
+
     private Post save(PostDto postDto, User user) {
         Post post = new Post();
         post.setImage(postDto.getImage());

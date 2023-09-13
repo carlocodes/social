@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,5 +36,10 @@ public class PostController {
     @GetMapping("/getPosts/{userId}")
     public ResponseEntity<List<PostDto>> getPosts(@PathVariable Long userId) throws SocialException {
         return ResponseEntity.ok(postService.getPosts(userId));
+    }
+
+    @PutMapping("/edit")
+    public ResponseEntity<PostDto> edit(@RequestBody PostDto postDto) throws SocialException {
+        return ResponseEntity.ok(postService.edit(postDto));
     }
 }

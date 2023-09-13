@@ -34,6 +34,17 @@ public class PostService {
         }
     }
 
+    public PostDto getPost(Long id) throws SocialException {
+        try {
+            Post post = postRepository.findById(id)
+                    .orElseThrow(() -> new SocialException(String.format("Post with id: %d does not exist!", id)));
+
+            return mapToDto(post);
+        } catch (SocialException e) {
+            throw new SocialException(String.format("Get post failed with id: %d due to %s", id, e.getMessage()), e);
+        }
+    }
+
     public List<PostDto> getPosts(Long userId) throws SocialException {
         try {
             User user = userService.findById(userId)

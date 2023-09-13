@@ -27,6 +27,11 @@ public class PostController {
         return ResponseEntity.ok(postService.create(postDto));
     }
 
+    @GetMapping("/getPost/{id}")
+    public ResponseEntity<PostDto> getPost(@PathVariable Long id) throws SocialException {
+        return ResponseEntity.ok(postService.getPost(id));
+    }
+
     @GetMapping("/getPosts/{userId}")
     public ResponseEntity<List<PostDto>> getPosts(@PathVariable Long userId) throws SocialException {
         return ResponseEntity.ok(postService.getPosts(userId));

@@ -38,6 +38,11 @@ public class PostController {
         return ResponseEntity.ok(postService.getPosts(userId));
     }
 
+    @GetMapping("/getNewsfeed/{userId}")
+    public ResponseEntity<List<PostDto>> getNewsfeed(@PathVariable Long userId) throws SocialException {
+        return ResponseEntity.ok(postService.getNewsfeed(userId));
+    }
+
     @PutMapping("/edit")
     public ResponseEntity<PostDto> edit(@RequestBody PostDto postDto) throws SocialException {
         return ResponseEntity.ok(postService.edit(postDto));

@@ -4,21 +4,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
-public class Post {
+public class FollowRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String image;
-    private String message;
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private User sender;
+    @ManyToOne
+    private User receiver;
     private LocalDateTime createdDateTime;
+    private boolean accepted;
 
     public Long getId() {
         return id;
@@ -28,28 +27,20 @@ public class Post {
         this.id = id;
     }
 
-    public String getImage() {
-        return image;
+    public User getSender() {
+        return sender;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 
-    public String getMessage() {
-        return message;
+    public User getReceiver() {
+        return receiver;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
     }
 
     public LocalDateTime getCreatedDateTime() {
@@ -60,14 +51,22 @@ public class Post {
         this.createdDateTime = createdDateTime;
     }
 
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
+    }
+
     @Override
     public String toString() {
-        return "Post{" +
+        return "FollowRequest{" +
                 "id=" + id +
-                ", image='" + image + '\'' +
-                ", message='" + message + '\'' +
-                ", user=" + user +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
                 ", createdDateTime=" + createdDateTime +
+                ", accepted=" + accepted +
                 '}';
     }
 }

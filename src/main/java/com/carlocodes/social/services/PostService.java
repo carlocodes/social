@@ -1,6 +1,7 @@
 package com.carlocodes.social.services;
 
 import com.carlocodes.social.dtos.PostDto;
+import com.carlocodes.social.entities.FollowRequest;
 import com.carlocodes.social.entities.Post;
 import com.carlocodes.social.entities.User;
 import com.carlocodes.social.exceptions.SocialException;
@@ -14,11 +15,14 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
+    private final FollowRequestService followRequestService;
 
     public PostService(PostRepository postRepository,
-                       UserService userService) {
+                       UserService userService,
+                       FollowRequestService followRequestService) {
         this.postRepository = postRepository;
         this.userService = userService;
+        this.followRequestService = followRequestService;
     }
 
     public PostDto create(PostDto postDto) throws SocialException {
@@ -58,6 +62,27 @@ public class PostService {
         }
     }
 
+    public List<PostDto> getNewsfeed(Long userId) throws SocialException {
+        try {
+            User user = userService.findById(userId)
+                    .orElseThrow(() -> new SocialException(String.format("User with id: %d does not exist!", userId)));
+
+            List<FollowRequest> buddies = followRequestService.findByReceiverIdAndAcceptedIsTrue(user.getId());
+            List<Long> buddyIds = buddies
+                    .stream()
+                    .map(FollowRequest::getSender)
+                    .map(User::getId)
+                    .collect(Collectors.toList());
+
+            return findByUserInOrderByCreatedDateTimeDesc(buddyIds)
+                    .stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+        } catch (SocialException e) {
+            throw new SocialException(String.format("Get newsfeed failed for user with id: %d due to %s", userId, e.getMessage()), e);
+        }
+    }
+
     public PostDto edit(PostDto postDto) throws SocialException {
         try {
             Long id = postDto.getId();
@@ -86,6 +111,10 @@ public class PostService {
         post.setMessage(postDto.getMessage());
         post.setUser(user);
         return postRepository.save(post);
+    }
+
+    private List<Post> findByUserInOrderByCreatedDateTimeDesc(List<Long> userIds) {
+        return postRepository.findByUserInOrderByCreatedDateTimeDesc(userIds);
     }
 
     private PostDto mapToDto(Post post) {

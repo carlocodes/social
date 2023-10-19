@@ -5,6 +5,7 @@ import com.carlocodes.social.exceptions.SocialException;
 import com.carlocodes.social.services.BuddyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,9 +25,15 @@ public class BuddyController {
         return ResponseEntity.ok("Buddy request sent!");
     }
 
-    @PostMapping("/acceptBuddyRequest")
+    @PutMapping("/acceptBuddyRequest")
     public ResponseEntity<String> acceptBuddyRequest(@RequestBody BuddyRequestDto buddyRequestDto) throws SocialException {
         buddyService.acceptBuddyRequest(buddyRequestDto);
         return ResponseEntity.ok("Buddy request accepted!");
+    }
+
+    @PutMapping("/declineBuddyRequest")
+    public ResponseEntity<String> declineBuddyRequest(@RequestBody BuddyRequestDto buddyRequestDto) throws SocialException {
+        buddyService.declineBuddyRequest(buddyRequestDto);
+        return ResponseEntity.ok("Buddy request declined!");
     }
 }

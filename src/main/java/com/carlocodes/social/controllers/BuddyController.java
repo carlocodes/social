@@ -23,4 +23,10 @@ public class BuddyController {
         buddyService.sendBuddyRequest(buddyRequestDto);
         return ResponseEntity.ok("Buddy request sent!");
     }
+
+    @PostMapping("/acceptBuddyRequest")
+    public ResponseEntity<String> acceptBuddyRequest(@RequestBody BuddyRequestDto buddyRequestDto) throws SocialException {
+        buddyService.acceptBuddyRequest(buddyRequestDto);
+        return ResponseEntity.ok("Buddy request accepted!");
+    }
 }

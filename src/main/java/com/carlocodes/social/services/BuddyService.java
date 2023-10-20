@@ -1,13 +1,16 @@
 package com.carlocodes.social.services;
 
+import com.carlocodes.social.dtos.BuddyDto;
 import com.carlocodes.social.dtos.BuddyRequestDto;
 import com.carlocodes.social.entities.Buddy;
 import com.carlocodes.social.entities.User;
 import com.carlocodes.social.exceptions.SocialException;
+import com.carlocodes.social.mappers.BuddyMapper;
 import com.carlocodes.social.repositories.BuddyRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -125,6 +128,17 @@ public class BuddyService {
                     buddyRequestDto.getSenderId(),
                     buddyRequestDto.getReceiverId(),
                     e.getMessage()), e);
+        }
+    }
+
+    public List<BuddyDto> getPendingBuddyRequests(long id) throws SocialException {
+        try {
+            User user = userService.findById(id).orElseThrow(() ->
+                    new SocialException(String.format("User id: %d does not exist!", id)));
+
+            return BuddyMapper.INSTANCE.mapToDtos(buddyRepository.findByReceiverAndAcceptedIsNull(user));
+        } catch (SocialException e) {
+            throw new SocialException(String.format("Get pending buddy requests for user id: %d failed due to %s", id, e.getMessage()), e);
         }
     }
 

@@ -1,23 +1,13 @@
-package com.carlocodes.social.entities;
+package com.carlocodes.social.dtos;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import com.carlocodes.social.entities.User;
+
 import java.time.LocalDateTime;
 
-@Entity
-public class Buddy {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BuddyDto {
     private Long id;
-    @ManyToOne
-    private User sender;
-    @ManyToOne
-    private User receiver;
-    @Column(nullable = true)
+    private UserDto sender;
+    private UserDto receiver;
     private Boolean accepted;
     private LocalDateTime createdDateTime;
 
@@ -29,19 +19,19 @@ public class Buddy {
         this.id = id;
     }
 
-    public User getSender() {
+    public UserDto getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(UserDto sender) {
         this.sender = sender;
     }
 
-    public User getReceiver() {
+    public UserDto getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(User receiver) {
+    public void setReceiver(UserDto receiver) {
         this.receiver = receiver;
     }
 
@@ -63,7 +53,7 @@ public class Buddy {
 
     @Override
     public String toString() {
-        return "Buddy{" +
+        return "BuddyDto{" +
                 "id=" + id +
                 ", sender=" + sender +
                 ", receiver=" + receiver +

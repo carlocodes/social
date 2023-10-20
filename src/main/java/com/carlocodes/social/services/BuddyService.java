@@ -8,6 +8,7 @@ import com.carlocodes.social.repositories.BuddyRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class BuddyService {
@@ -93,6 +94,34 @@ public class BuddyService {
             save(buddy);
         } catch (SocialException e) {
             throw new SocialException(String.format("Decline buddy request from sender id: %d to receiver id: %d failed due to %s",
+                    buddyRequestDto.getSenderId(),
+                    buddyRequestDto.getReceiverId(),
+                    e.getMessage()), e);
+        }
+    }
+
+    public void removeBuddy(BuddyRequestDto buddyRequestDto) throws SocialException {
+        try {
+            long senderId = buddyRequestDto.getSenderId();
+            long receiverId = buddyRequestDto.getReceiverId();
+
+            User sender = userService.findById(senderId).orElseThrow(() ->
+                    new SocialException(String.format("Sender id: %d does not exist!", senderId)));
+            User receiver = userService.findById(receiverId).orElseThrow(() ->
+                    new SocialException(String.format("Receiver id: %d does not exist!", receiverId)));
+
+            Optional<Buddy> senderToReceiverBuddy = buddyRepository.findBySenderAndReceiverAndAcceptedIsTrue(sender, receiver);
+            Optional<Buddy> receiverToSenderBuddy = buddyRepository.findBySenderAndReceiverAndAcceptedIsTrue(receiver, sender);
+
+            if (senderToReceiverBuddy.isPresent()) {
+                buddyRepository.delete(senderToReceiverBuddy.get());
+            } else if (receiverToSenderBuddy.isPresent()) {
+                buddyRepository.delete(receiverToSenderBuddy.get());
+            } else {
+                throw new SocialException(String.format("Sender id: %d and receiver id: %d are not buddies!", senderId, receiverId));
+            }
+        } catch (SocialException e) {
+            throw new SocialException(String.format("Remove buddy from sender id: %d to receiver id: %d failed due to %s",
                     buddyRequestDto.getSenderId(),
                     buddyRequestDto.getReceiverId(),
                     e.getMessage()), e);

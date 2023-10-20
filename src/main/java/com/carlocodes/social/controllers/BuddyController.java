@@ -4,6 +4,7 @@ import com.carlocodes.social.dtos.BuddyRequestDto;
 import com.carlocodes.social.exceptions.SocialException;
 import com.carlocodes.social.services.BuddyService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,5 +36,11 @@ public class BuddyController {
     public ResponseEntity<String> declineBuddyRequest(@RequestBody BuddyRequestDto buddyRequestDto) throws SocialException {
         buddyService.declineBuddyRequest(buddyRequestDto);
         return ResponseEntity.ok("Buddy request declined!");
+    }
+
+    @DeleteMapping("/remove-buddy")
+    public ResponseEntity<String> removeBuddy(@RequestBody BuddyRequestDto buddyRequestDto) throws SocialException {
+        buddyService.removeBuddy(buddyRequestDto);
+        return ResponseEntity.ok("Buddy removed!");
     }
 }

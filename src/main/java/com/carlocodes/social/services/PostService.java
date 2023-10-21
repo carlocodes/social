@@ -1,6 +1,7 @@
 package com.carlocodes.social.services;
 
 import com.carlocodes.social.dtos.PostDto;
+import com.carlocodes.social.entities.Buddy;
 import com.carlocodes.social.entities.Post;
 import com.carlocodes.social.entities.User;
 import com.carlocodes.social.exceptions.SocialException;
@@ -8,17 +9,21 @@ import com.carlocodes.social.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
+    private final BuddyService buddyService;
 
     public PostService(PostRepository postRepository,
-                       UserService userService) {
+                       UserService userService,
+                       BuddyService buddyService) {
         this.postRepository = postRepository;
         this.userService = userService;
+        this.buddyService = buddyService;
     }
 
     public PostDto create(PostDto postDto) throws SocialException {
@@ -77,6 +82,29 @@ public class PostService {
             return mapToDto(postRepository.save(post));
         } catch (SocialException e) {
             throw new SocialException(String.format("Edit post with id: %d failed for user with id: %d due to %s", postDto.getId(), postDto.getUserId(), e.getMessage()), e);
+        }
+    }
+
+    public List<PostDto> getBuddiesPosts(long id) throws SocialException {
+        try {
+            User user = userService.findById(id).orElseThrow(() ->
+                    new SocialException(String.format("User id: %d does not exist!", id)));
+
+            List<Buddy> buddies = buddyService.findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(user);
+
+            Set<Long> buddyIds = buddies.stream()
+                    .map(buddy -> buddyService.getBuddyId(buddy, user))
+                    .collect(Collectors.toSet());
+
+            // TODO: Add additional conditions like:
+            // Sorting by date
+            // Limiting # of posts per user
+            // etc
+            return postRepository.findByUserIdIn(buddyIds).stream()
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+        } catch (SocialException e) {
+            throw new SocialException(String.format("Get buddies posts for user id: %d failed due to %s", id, e.getMessage()), e);
         }
     }
 

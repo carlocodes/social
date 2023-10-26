@@ -96,6 +96,8 @@ public class PostService {
                     .map(buddy -> buddyService.getBuddyId(buddy, user))
                     .collect(Collectors.toSet());
 
+            buddyIds.add(user.getId());
+
             // TODO: Add additional conditions like:
             // Sorting by date
             // Limiting # of posts per user

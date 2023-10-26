@@ -160,7 +160,7 @@ public class BuddyService {
         return buddyRepository.save(buddy);
     }
 
-    public List<Buddy> findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(User user) {
-        return buddyRepository.findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(user);
+    public List<Buddy> findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(User sender, User receiver) {
+        return buddyRepository.findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(sender, receiver);
     }
 }

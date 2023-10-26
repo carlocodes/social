@@ -90,7 +90,7 @@ public class PostService {
             User user = userService.findById(id).orElseThrow(() ->
                     new SocialException(String.format("User id: %d does not exist!", id)));
 
-            List<Buddy> buddies = buddyService.findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(user);
+            List<Buddy> buddies = buddyService.findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(user, user);
 
             Set<Long> buddyIds = buddies.stream()
                     .map(buddy -> buddyService.getBuddyId(buddy, user))

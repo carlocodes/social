@@ -152,7 +152,15 @@ public class BuddyService {
         return save(buddy);
     }
 
+    public Long getBuddyId(Buddy buddy, User user) {
+        return buddy.getSender().equals(user) ? buddy.getReceiver().getId() : buddy.getSender().getId();
+    }
+
     private Buddy save(Buddy buddy) {
         return buddyRepository.save(buddy);
+    }
+
+    public List<Buddy> findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(User sender, User receiver) {
+        return buddyRepository.findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(sender, receiver);
     }
 }

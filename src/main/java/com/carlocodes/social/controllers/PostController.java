@@ -42,4 +42,9 @@ public class PostController {
     public ResponseEntity<PostDto> edit(@RequestBody PostDto postDto) throws SocialException {
         return ResponseEntity.ok(postService.edit(postDto));
     }
+
+    @GetMapping("/get-buddies-posts/{id}")
+    public ResponseEntity<List<PostDto>> getBuddiesPosts(@PathVariable Long id) throws SocialException {
+        return ResponseEntity.ok(postService.getBuddiesPosts(id));
+    }
 }

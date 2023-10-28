@@ -23,28 +23,28 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<PostDto> create(@RequestBody PostDto postDto) throws SocialException {
-        return ResponseEntity.ok(postService.create(postDto));
+    @PostMapping("/create-post")
+    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) throws SocialException {
+        return ResponseEntity.ok(postService.createPost(postDto));
     }
 
     @GetMapping("/get-post/{id}")
-    public ResponseEntity<PostDto> getPost(@PathVariable Long id) throws SocialException {
+    public ResponseEntity<PostDto> getPost(@PathVariable long id) throws SocialException {
         return ResponseEntity.ok(postService.getPost(id));
     }
 
-    @GetMapping("/get-posts/{userId}")
-    public ResponseEntity<List<PostDto>> getPosts(@PathVariable Long userId) throws SocialException {
-        return ResponseEntity.ok(postService.getPosts(userId));
+    @GetMapping("/get-posts/user/{id}")
+    public ResponseEntity<List<PostDto>> getPosts(@PathVariable long id) throws SocialException {
+        return ResponseEntity.ok(postService.getPosts(id));
     }
 
-    @PutMapping("/edit")
-    public ResponseEntity<PostDto> edit(@RequestBody PostDto postDto) throws SocialException {
-        return ResponseEntity.ok(postService.edit(postDto));
+    @PutMapping("/edit-post")
+    public ResponseEntity<PostDto> editPost(@RequestBody PostDto postDto) throws SocialException {
+        return ResponseEntity.ok(postService.editPost(postDto));
     }
 
-    @GetMapping("/get-buddies-posts/{id}")
-    public ResponseEntity<List<PostDto>> getBuddiesPosts(@PathVariable Long id) throws SocialException {
-        return ResponseEntity.ok(postService.getBuddiesPosts(id));
+    @GetMapping("/feed/{id}")
+    public ResponseEntity<List<PostDto>> feed(@PathVariable long id) throws SocialException {
+        return ResponseEntity.ok(postService.feed(id));
     }
 }

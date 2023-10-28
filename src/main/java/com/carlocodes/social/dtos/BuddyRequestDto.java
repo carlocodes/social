@@ -1,22 +1,22 @@
 package com.carlocodes.social.dtos;
 
 public class BuddyRequestDto {
-    private Long senderId;
-    private Long receiverId;
+    private long senderId;
+    private long receiverId;
 
-    public Long getSenderId() {
+    public long getSenderId() {
         return senderId;
     }
 
-    public void setSenderId(Long senderId) {
+    public void setSenderId(long senderId) {
         this.senderId = senderId;
     }
 
-    public Long getReceiverId() {
+    public long getReceiverId() {
         return receiverId;
     }
 
-    public void setReceiverId(Long receiverId) {
+    public void setReceiverId(long receiverId) {
         this.receiverId = receiverId;
     }
 

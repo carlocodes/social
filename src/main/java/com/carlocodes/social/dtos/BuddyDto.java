@@ -5,17 +5,17 @@ import com.carlocodes.social.entities.User;
 import java.time.LocalDateTime;
 
 public class BuddyDto {
-    private Long id;
+    private long id;
     private UserDto sender;
     private UserDto receiver;
     private Boolean accepted;
     private LocalDateTime createdDateTime;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

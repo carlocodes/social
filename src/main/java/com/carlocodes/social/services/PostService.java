@@ -124,6 +124,7 @@ public class PostService {
         postDto.setImage(post.getImage());
         postDto.setMessage(post.getMessage());
         postDto.setUserId(post.getUser().getId());
+        postDto.setCreatedDateTime(post.getCreatedDateTime());
         return postDto;
     }
 }

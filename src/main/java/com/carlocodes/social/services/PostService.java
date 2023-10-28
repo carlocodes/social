@@ -27,9 +27,9 @@ public class PostService {
         this.buddyService = buddyService;
     }
 
-    public PostDto create(PostDto postDto) throws SocialException {
+    public PostDto createPost(PostDto postDto) throws SocialException {
         try {
-            Long userId = postDto.getUserId();
+            long userId = postDto.getUserId();
 
             User user = userService.findById(userId)
                     .orElseThrow(() -> new SocialException(String.format("User with id: %d does not exist!", userId)));
@@ -41,7 +41,7 @@ public class PostService {
         }
     }
 
-    public PostDto getPost(Long id) throws SocialException {
+    public PostDto getPost(long id) throws SocialException {
         try {
             Post post = postRepository.findById(id)
                     .orElseThrow(() -> new SocialException(String.format("Post with id: %d does not exist!", id)));
@@ -52,23 +52,23 @@ public class PostService {
         }
     }
 
-    public List<PostDto> getPosts(Long userId) throws SocialException {
+    public List<PostDto> getPosts(long id) throws SocialException {
         try {
-            User user = userService.findById(userId)
-                    .orElseThrow(() -> new SocialException(String.format("User with id: %d does not exist!", userId)));
+            User user = userService.findById(id)
+                    .orElseThrow(() -> new SocialException(String.format("User with id: %d does not exist!", id)));
 
             return PostMapper.INSTANCE.mapToDtos(postRepository.findByUser(user));
         } catch (SocialException e) {
-            throw new SocialException(String.format("Get posts failed for user with id: %d due to %s", userId, e.getMessage()), e);
+            throw new SocialException(String.format("Get posts failed for user with id: %d due to %s", id, e.getMessage()), e);
         }
     }
 
-    public PostDto edit(PostDto postDto) throws SocialException {
+    public PostDto editPost(PostDto postDto) throws SocialException {
         try {
-            Long id = postDto.getId();
+            long id = postDto.getId();
             String message = postDto.getMessage();
             String image = postDto.getImage();
-            Long userId = postDto.getUserId();
+            long userId = postDto.getUserId();
 
             Post post = postRepository.findById(id)
                     .orElseThrow(() -> new SocialException(String.format("Post with id: %d does not exist!", id)));
@@ -86,7 +86,7 @@ public class PostService {
         }
     }
 
-    public List<PostDto> getBuddiesPosts(long id) throws SocialException {
+    public List<PostDto> feed(long id) throws SocialException {
         try {
             User user = userService.findById(id).orElseThrow(() ->
                     new SocialException(String.format("User id: %d does not exist!", id)));
@@ -105,7 +105,7 @@ public class PostService {
             // etc
             return PostMapper.INSTANCE.mapToDtos(postRepository.findByUserIdInOrderByCreatedDateTimeDesc(buddyIds));
         } catch (SocialException e) {
-            throw new SocialException(String.format("Get buddies posts for user id: %d failed due to %s", id, e.getMessage()), e);
+            throw new SocialException(String.format("Get feed for user id: %d failed due to %s", id, e.getMessage()), e);
         }
     }
 

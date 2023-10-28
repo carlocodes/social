@@ -3,17 +3,17 @@ package com.carlocodes.social.dtos;
 import java.time.LocalDateTime;
 
 public class PostDto {
-    private Long id;
+    private long id;
     private String image;
     private String message;
-    private Long userId;
+    private long userId;
     private LocalDateTime createdDateTime;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -33,11 +33,11 @@ public class PostDto {
         this.message = message;
     }
 
-    public Long getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

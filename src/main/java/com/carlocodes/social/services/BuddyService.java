@@ -42,12 +42,10 @@ public class BuddyService {
                     buddyRepository.existsBySenderAndReceiverAndAcceptedIsNull(receiver, sender))
                 throw new SocialException("Buddy request has already been sent!");
 
-            createBuddyRequest(sender, receiver);
+            saveBuddyRequest(sender, receiver);
         } catch (SocialException e) {
             throw new SocialException(String.format("Send buddy request from sender id: %d to receiver id: %d failed due to: %s",
-                    buddyRequestDto.getSenderId(),
-                    buddyRequestDto.getReceiverId(),
-                    e.getMessage()), e);
+                    buddyRequestDto.getSenderId(), buddyRequestDto.getReceiverId(), e.getMessage()), e);
         }
     }
 
@@ -68,12 +66,10 @@ public class BuddyService {
             Buddy buddy = buddyRepository.findBySenderAndReceiverAndAcceptedIsNull(sender, receiver).orElseThrow(() ->
                     new SocialException("Buddy request does not exist!"));
             buddy.setAccepted(true);
-            save(buddy);
+            buddyRepository.save(buddy);
         } catch (SocialException e) {
             throw new SocialException(String.format("Accept buddy request from sender id: %d to receiver id: %d failed due to %s",
-                    buddyRequestDto.getSenderId(),
-                    buddyRequestDto.getReceiverId(),
-                    e.getMessage()), e);
+                    buddyRequestDto.getSenderId(), buddyRequestDto.getReceiverId(), e.getMessage()), e);
         }
     }
 
@@ -94,12 +90,10 @@ public class BuddyService {
             Buddy buddy = buddyRepository.findBySenderAndReceiverAndAcceptedIsNull(sender, receiver).orElseThrow(() ->
                     new SocialException("Buddy request does not exist!"));
             buddy.setAccepted(false);
-            save(buddy);
+            buddyRepository.save(buddy);
         } catch (SocialException e) {
             throw new SocialException(String.format("Decline buddy request from sender id: %d to receiver id: %d failed due to %s",
-                    buddyRequestDto.getSenderId(),
-                    buddyRequestDto.getReceiverId(),
-                    e.getMessage()), e);
+                    buddyRequestDto.getSenderId(), buddyRequestDto.getReceiverId(), e.getMessage()), e);
         }
     }
 
@@ -125,9 +119,7 @@ public class BuddyService {
             }
         } catch (SocialException e) {
             throw new SocialException(String.format("Remove buddy from sender id: %d to receiver id: %d failed due to %s",
-                    buddyRequestDto.getSenderId(),
-                    buddyRequestDto.getReceiverId(),
-                    e.getMessage()), e);
+                    buddyRequestDto.getSenderId(), buddyRequestDto.getReceiverId(), e.getMessage()), e);
         }
     }
 
@@ -142,22 +134,18 @@ public class BuddyService {
         }
     }
 
-    private Buddy createBuddyRequest(User sender, User receiver) {
+    private void saveBuddyRequest(User sender, User receiver) {
         Buddy buddy = new Buddy();
 
         buddy.setSender(sender);
         buddy.setReceiver(receiver);
         buddy.setCreatedDateTime(LocalDateTime.now());
 
-        return save(buddy);
+        buddyRepository.save(buddy);
     }
 
     public Long getBuddyId(Buddy buddy, User user) {
         return buddy.getSender().equals(user) ? buddy.getReceiver().getId() : buddy.getSender().getId();
-    }
-
-    private Buddy save(Buddy buddy) {
-        return buddyRepository.save(buddy);
     }
 
     public List<Buddy> findBySenderAndAcceptedIsTrueOrReceiverAndAcceptedIsTrue(User sender, User receiver) {

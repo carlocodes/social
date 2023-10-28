@@ -36,7 +36,8 @@ public class PostService {
 
             return PostMapper.INSTANCE.mapToDto(save(postDto, user));
         } catch (SocialException e) {
-            throw new SocialException(String.format("Create post failed for user with id: %s due to %s", postDto.getUserId(), e.getMessage()), e);
+            throw new SocialException(String.format("Create post failed for user with id: %s due to %s",
+                    postDto.getUserId(), e.getMessage()), e);
         }
     }
 
@@ -80,7 +81,8 @@ public class PostService {
 
             return PostMapper.INSTANCE.mapToDto(postRepository.save(post));
         } catch (SocialException e) {
-            throw new SocialException(String.format("Edit post with id: %d failed for user with id: %d due to %s", postDto.getId(), postDto.getUserId(), e.getMessage()), e);
+            throw new SocialException(String.format("Edit post with id: %d failed for user with id: %d due to %s",
+                    postDto.getId(), postDto.getUserId(), e.getMessage()), e);
         }
     }
 
@@ -98,7 +100,7 @@ public class PostService {
             buddyIds.add(user.getId());
 
             // TODO: Add additional conditions like:
-            // Sorting by date
+            // Sorting by new/trending posts
             // Limiting # of posts per user
             // etc
             return PostMapper.INSTANCE.mapToDtos(postRepository.findByUserIdInOrderByCreatedDateTimeDesc(buddyIds));

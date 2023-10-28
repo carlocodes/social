@@ -5,6 +5,7 @@ import com.carlocodes.social.entities.Buddy;
 import com.carlocodes.social.entities.Post;
 import com.carlocodes.social.entities.User;
 import com.carlocodes.social.exceptions.SocialException;
+import com.carlocodes.social.mappers.PostMapper;
 import com.carlocodes.social.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class PostService {
             User user = userService.findById(userId)
                     .orElseThrow(() -> new SocialException(String.format("User with id: %d does not exist!", userId)));
 
-            return mapToDto(save(postDto, user));
+            return PostMapper.INSTANCE.mapToDto(save(postDto, user));
         } catch (SocialException e) {
             throw new SocialException(String.format("Create post failed for user with id: %s due to %s", postDto.getUserId(), e.getMessage()), e);
         }
@@ -44,7 +45,7 @@ public class PostService {
             Post post = postRepository.findById(id)
                     .orElseThrow(() -> new SocialException(String.format("Post with id: %d does not exist!", id)));
 
-            return mapToDto(post);
+            return PostMapper.INSTANCE.mapToDto(post);
         } catch (SocialException e) {
             throw new SocialException(String.format("Get post with id: %d failed due to %s", id, e.getMessage()), e);
         }
@@ -55,9 +56,7 @@ public class PostService {
             User user = userService.findById(userId)
                     .orElseThrow(() -> new SocialException(String.format("User with id: %d does not exist!", userId)));
 
-            return postRepository.findByUser(user)
-                    .stream().map(this::mapToDto)
-                    .collect(Collectors.toList());
+            return PostMapper.INSTANCE.mapToDtos(postRepository.findByUser(user));
         } catch (SocialException e) {
             throw new SocialException(String.format("Get posts failed for user with id: %d due to %s", userId, e.getMessage()), e);
         }
@@ -79,7 +78,7 @@ public class PostService {
             post.setMessage(message != null ? message : post.getMessage());
             post.setImage(image != null ? image : post.getImage());
 
-            return mapToDto(postRepository.save(post));
+            return PostMapper.INSTANCE.mapToDto(postRepository.save(post));
         } catch (SocialException e) {
             throw new SocialException(String.format("Edit post with id: %d failed for user with id: %d due to %s", postDto.getId(), postDto.getUserId(), e.getMessage()), e);
         }
@@ -102,9 +101,7 @@ public class PostService {
             // Sorting by date
             // Limiting # of posts per user
             // etc
-            return postRepository.findByUserIdInOrderByCreatedDateTimeDesc(buddyIds).stream()
-                    .map(this::mapToDto)
-                    .collect(Collectors.toList());
+            return PostMapper.INSTANCE.mapToDtos(postRepository.findByUserIdInOrderByCreatedDateTimeDesc(buddyIds));
         } catch (SocialException e) {
             throw new SocialException(String.format("Get buddies posts for user id: %d failed due to %s", id, e.getMessage()), e);
         }
@@ -116,15 +113,5 @@ public class PostService {
         post.setMessage(postDto.getMessage());
         post.setUser(user);
         return postRepository.save(post);
-    }
-
-    private PostDto mapToDto(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
-        postDto.setImage(post.getImage());
-        postDto.setMessage(post.getMessage());
-        postDto.setUserId(post.getUser().getId());
-        postDto.setCreatedDateTime(post.getCreatedDateTime());
-        return postDto;
     }
 }

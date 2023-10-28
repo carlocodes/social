@@ -25,19 +25,19 @@ public class BuddyController {
         this.buddyService = buddyService;
     }
 
-    @PostMapping("/sendBuddyRequest")
+    @PostMapping("/send-buddy-request")
     public ResponseEntity<String> sendBuddyRequest(@RequestBody BuddyRequestDto buddyRequestDto) throws SocialException {
         buddyService.sendBuddyRequest(buddyRequestDto);
         return ResponseEntity.ok("Buddy request sent!");
     }
 
-    @PutMapping("/acceptBuddyRequest")
+    @PutMapping("/accept-buddy-request")
     public ResponseEntity<String> acceptBuddyRequest(@RequestBody BuddyRequestDto buddyRequestDto) throws SocialException {
         buddyService.acceptBuddyRequest(buddyRequestDto);
         return ResponseEntity.ok("Buddy request accepted!");
     }
 
-    @PutMapping("/declineBuddyRequest")
+    @PutMapping("/decline-buddy-request")
     public ResponseEntity<String> declineBuddyRequest(@RequestBody BuddyRequestDto buddyRequestDto) throws SocialException {
         buddyService.declineBuddyRequest(buddyRequestDto);
         return ResponseEntity.ok("Buddy request declined!");

@@ -102,7 +102,7 @@ public class PostService {
             // Sorting by date
             // Limiting # of posts per user
             // etc
-            return postRepository.findByUserIdIn(buddyIds).stream()
+            return postRepository.findByUserIdInOrderByCreatedDateTimeDesc(buddyIds).stream()
                     .map(this::mapToDto)
                     .collect(Collectors.toList());
         } catch (SocialException e) {
@@ -124,6 +124,7 @@ public class PostService {
         postDto.setImage(post.getImage());
         postDto.setMessage(post.getMessage());
         postDto.setUserId(post.getUser().getId());
+        postDto.setCreatedDateTime(post.getCreatedDateTime());
         return postDto;
     }
 }

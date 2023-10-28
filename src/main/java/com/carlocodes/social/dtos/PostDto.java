@@ -1,10 +1,13 @@
 package com.carlocodes.social.dtos;
 
+import java.time.LocalDateTime;
+
 public class PostDto {
     private Long id;
     private String image;
     private String message;
     private Long userId;
+    private LocalDateTime createdDateTime;
 
     public Long getId() {
         return id;
@@ -38,6 +41,14 @@ public class PostDto {
         this.userId = userId;
     }
 
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
     @Override
     public String toString() {
         return "PostDto{" +
@@ -45,6 +56,7 @@ public class PostDto {
                 ", image='" + image + '\'' +
                 ", message='" + message + '\'' +
                 ", userId=" + userId +
+                ", createdDateTime=" + createdDateTime +
                 '}';
     }
 }

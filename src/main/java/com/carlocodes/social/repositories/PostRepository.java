@@ -11,5 +11,5 @@ import java.util.Set;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByUser(User user);
-    List<Post> findByUserIdIn(Set<Long> ids);
+    List<Post> findByUserIdInOrderByCreatedDateTimeDesc(Set<Long> ids);
 }

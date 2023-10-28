@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import java.time.LocalDateTime;
 
 @Entity
 public class Post {
@@ -17,6 +19,12 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    private LocalDateTime createdDateTime;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdDateTime = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -50,6 +58,14 @@ public class Post {
         this.user = user;
     }
 
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
     @Override
     public String toString() {
         return "Post{" +
@@ -57,6 +73,7 @@ public class Post {
                 ", image='" + image + '\'' +
                 ", message='" + message + '\'' +
                 ", user=" + user +
+                ", createdDateTime=" + createdDateTime +
                 '}';
     }
 }

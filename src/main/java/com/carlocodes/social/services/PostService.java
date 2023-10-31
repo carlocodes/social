@@ -105,7 +105,26 @@ public class PostService {
             // etc
             return PostMapper.INSTANCE.mapToDtos(postRepository.findByUserIdInOrderByCreatedDateTimeDesc(buddyIds));
         } catch (SocialException e) {
-            throw new SocialException(String.format("Get feed for user id: %d failed due to %s", id, e.getMessage()), e);
+            throw new SocialException(String.format("Get feed for user with id: %d failed due to %s", id, e.getMessage()), e);
+        }
+    }
+
+    public void deletePost(PostDto postDto) throws SocialException {
+        try {
+            long id = postDto.getId();
+            long userId = postDto.getUserId();
+
+            Post post = postRepository.findById(id)
+                    .orElseThrow(() -> new SocialException(String.format("Post with id: %d does not exist!", id)));
+
+            if (!post.getUser().getId().equals(userId)) {
+                throw new SocialException(String.format("User with id: %d is not allowed to delete post with id: %d!", userId, id));
+            }
+
+            postRepository.delete(post);
+        } catch (SocialException e) {
+            throw new SocialException(String.format("Delete post for user with id: %d failed due to %s",
+                    postDto.getUserId(), e.getMessage()), e);
         }
     }
 

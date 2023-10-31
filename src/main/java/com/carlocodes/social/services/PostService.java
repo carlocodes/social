@@ -123,8 +123,8 @@ public class PostService {
 
             postRepository.delete(post);
         } catch (SocialException e) {
-            throw new SocialException(String.format("Delete post for user with id: %d failed due to %s",
-                    postDto.getUserId(), e.getMessage()), e);
+            throw new SocialException(String.format("Delete post with id: %d for user with id: %d failed due to %s",
+                    postDto.getId(), postDto.getUserId(), e.getMessage()), e);
         }
     }
 

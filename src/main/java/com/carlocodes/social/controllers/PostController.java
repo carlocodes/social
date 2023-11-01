@@ -4,6 +4,7 @@ import com.carlocodes.social.dtos.PostDto;
 import com.carlocodes.social.exceptions.SocialException;
 import com.carlocodes.social.services.PostService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,5 +47,11 @@ public class PostController {
     @GetMapping("/feed/{id}")
     public ResponseEntity<List<PostDto>> feed(@PathVariable long id) throws SocialException {
         return ResponseEntity.ok(postService.feed(id));
+    }
+
+    @DeleteMapping("/delete-post")
+    public ResponseEntity<String> deletePost(@RequestBody PostDto postDto) throws SocialException {
+        postService.deletePost(postDto);
+        return ResponseEntity.ok("Post deleted!");
     }
 }
